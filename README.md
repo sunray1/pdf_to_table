@@ -21,8 +21,8 @@ To download the repository and script from GitHub, follow these steps:
 1. **Clone the Repository:**
    Open your terminal and navigate to the directory where you want to download the repository. Then enter the following commands:
 ```
-git clone https://github.com/YourUsername/YourRepository.git
-cd YourRepository
+git clone https://github.com/sunray1/pdf_to_table.git
+cd pdf_to_table
 chmod +x pdf_to_table.py
 ```
 2. **Download the Dependencies:**
@@ -89,7 +89,7 @@ It is highly recommended that parsed output tables be verified by humans.
 
 ## Help
 
-If you have any questions, problems, or encounter issues, visit the [GitHub Issues](https://github.com/YourUsername/YourRepository/issues) page of this repository and create a new issue.
+If you have any questions, problems, or encounter issues, visit the [GitHub Issues](https://github.com/sunray1/pdf_to_table/issues) page of this repository and create a new issue.
 
 ## Authors
 
