@@ -93,8 +93,6 @@ If you have any questions, problems, or encounter issues, visit the [GitHub Issu
 
 ## Authors
 
-Contributors names and contact info
-
 Chandra Earl  
 
 ## Version History
