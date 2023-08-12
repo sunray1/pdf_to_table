@@ -1,4 +1,4 @@
-# pdf-to-table
+# pdf_to_table
 
 This repository contains code and data necessary for the development of a reusable, command-line python script to streamline the extraction and structuring of species checklists from inside PDF tables into tidy CSV files.
 
