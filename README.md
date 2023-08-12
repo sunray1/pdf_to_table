@@ -44,11 +44,11 @@ chmod +x pdf_to_table.py
 The script can be executed via a standard python call with the appropriate parameters. Current parameters are detailed below.
 
 ```
->python pdf_to_table.py -h
+$ python pdf_to_table.py -h
 
 usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o]
 
-Parse a pdf table into a csv. Example: python tabula-test.py -i text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a
+Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a
 109.754,303.219,753.396,533.888 -p 1 -c
 
 options:
@@ -99,6 +99,7 @@ Chandra Earl
 
 Currently under development
 
-## Acknowledgments
+## Acknowledgments and Helpful Links
 
 * [A checklist recipe: making species data open and FAIR](https://doi.org/10.1093/database/baaa084)
+* [tabula-java](https://github.com/tabulapdf/tabula-java)

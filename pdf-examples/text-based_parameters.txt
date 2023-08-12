@@ -1,0 +1,15 @@
+Script Execution Summary
+Date and Time: 2023-08-11 18:03:22
+------------------------------
+Command Entered:
+pdf_to_table.py -i pdf-examples/text-based.pdf -c -a 111.242,62.876,751.908,293.545 -p 1 -a 109.754,303.963,751.908,532.4 -p 1 -a 86.687,62.132,687.916,292.801 -p 2
+
+Script Arguments:
+pdf: pdf-examples/text-based.pdf
+area: [[111.242, 62.876, 751.908, 293.545], [109.754, 303.963, 751.908, 532.4], [86.687, 62.132, 687.916, 292.801]]
+pages: ['1', '1', '2']
+concatenate: True
+OCR: False
+
+Outputs:
+pdf-examples/text-based_tables_parsed_concatenated.csv
