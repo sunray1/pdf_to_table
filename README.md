@@ -37,8 +37,8 @@ chmod +x pdf_to_table.py
   
 	**conda**
 	```
-  conda env create -f pdf_to_table.yml
-  conda activate pdf_to_table
+	conda env create -f pdf_to_table.yml
+	conda activate pdf_to_table
 	```
 
 ### Executing program
