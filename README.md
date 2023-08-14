@@ -4,7 +4,7 @@ This repository contains code and data necessary for the development of a reusab
 
 ## Description
 
-Species checklists are a crucial source of information for research and policy. Unfortunately, a substantial number of conventional species checklists are not conveniently available through distinct downloadable files; rather, they are often ensnared within tables embedded in PDF versions of published papers. The fact that these data are not open, findable, accessible, interoperable and reusable (FAIR) severely hampers fast and efficient information flow to policy and decision-making that are required to tackle the current biodiversity crisis. Here, I am working on a simple script designed to mobilize these species checklists into tidy, csv files for downstream use by researchers or data scientists and can be added into a larger pipeline.
+Species checklists are a crucial source of information for research and policy. Unfortunately, a substantial number of conventional species checklists are not conveniently available through distinct downloadable files; rather, they are often ensnared within tables embedded in PDF versions of published papers. The fact that these data are not open, findable, accessible, interoperable and reusable (FAIR) severely hampers fast and efficient information flow to policy and decision-making that are required to tackle the current biodiversity crisis. Here, I wrote a simple script designed to mobilize these species checklists into tidy, csv files for downstream use by researchers or data scientists and can be added into a larger pipeline.
  
 
 ## Getting Started
@@ -31,25 +31,28 @@ chmod +x pdf_to_table.py
 	**pip**
 
 	```
-	pip install ocrmypdf
-	pip install tabula-py
+ pip install ocrmypdf
+ pip install tabula-py
 	```
 	**conda**
 	```
-	
+  conda env create -f pdf_to_table.yml
+  conda activate pdf_to_table
 	```
 
 ### Executing program
 
 The script can be executed via a standard python call with the appropriate parameters. Current parameters are detailed below.
 
+It is **highly** recommended that parsed output tables be verified by humans. An output file with the command parameters will also be outputted in addition to the csv file(s).
+
 ```
 $ python pdf_to_table.py -h
 
-usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o]
+usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o] (-s | -l)
 
 Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a
-109.754,303.219,753.396,533.888 -p 1 -c
+109.754,303.219,753.396,533.888 -p 1 -c -l
 
 options:
   -h, --help            show this help message and exit
@@ -59,11 +62,14 @@ options:
   -p PAGES, --pages PAGES
                         Pages of tables in file. Must match up to number of areas. Example: '1'
   -c, --concatenate     Add flag if all parsed tables should be concatenated together
-  -o, --OCR             Add flag if pdf needs to be OCRed
+  -o, --OCR             Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.
+  -s, --stream          Add flag if table should be parsed via the Stream extraction method. Stream is used to parse tables that have
+                        whitespaces between cells to simulate a table structure.
+  -l, --lattice         Add flag if table should be parsed via the Lattice extraction method. Lattice is used used to parse tables that
+                        have demarcated lines between cells.
 ```
 
-
-Depending on the type of PDF file, tables can be text or image-based. This can be discovered by highlighting the table in a PDF viewer and seeing if the text is highlighted. If so, it is text-based, if not, the table is image-based. Tables that are imaged-based must first be OCRed and the layer added onto to the PDF.
+#### Demarcating Table Areas
 
 Each table on each page must be marked via point measurement coordinates and the page number. It is useful to use the Tabula app to grab table coordinates.
 
@@ -84,8 +90,21 @@ The area and pages can all be copied over into the command like this:
 ```
 python tabula-test.py -i text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a 109.754,303.219,753.396,533.888 -p 1 -a 85.943,61.388,687.916,293.545 -p 2
 ```
+#### Choosing Stream or Lattice Extraction
 
-It is highly recommended that parsed output tables be verified by humans.
+There are mainly two techniques used to detect tables: *Stream* and *Lattice*. Your choice will depend on how the table is printed in your pdf. You can toggle between the two in the Tabula app to see which is the best option for your use case.
+
+**Stream** can be used to parse tables that have whitespaces between cells to simulate a table structure. 
+
+**Lattice** can be used to parse tables that have demarcated lines between cells. It essentially works by looking at the shape of polygons and getting the text inside of the boxes.
+
+#### OCRing a PDF
+
+Depending on the type of PDF file, tables can be text or image-based. This can be discovered by highlighting the table in a PDF viewer and seeing if the text is highlighted. If so, it is text-based, if not, the table is image-based. Tables that are imaged-based must first be OCRed and the layer added onto to the PDF.
+
+The OCRmyPDF library is used to OCR the PDF text and add its position within the PDF itself, since this is important for table extraction. Add the "-o" flag to OCR your PDF and save it as a new file. Note that this will overwrite any positional text saved in your original PDF.
+
+
 
 ## Help
 
@@ -95,11 +114,8 @@ If you have any questions, problems, or encounter issues, visit the [GitHub Issu
 
 Chandra Earl  
 
-## Version History
-
-Currently under development
-
 ## Acknowledgments and Helpful Links
 
 * [A checklist recipe: making species data open and FAIR](https://doi.org/10.1093/database/baaa084)
 * [tabula-java](https://github.com/tabulapdf/tabula-java)
+* [PDFToExcel](https://tomassetti.me/how-to-convert-a-pdf-to-excel/)
