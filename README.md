@@ -31,9 +31,10 @@ chmod +x pdf_to_table.py
 	**pip**
 
 	```
- pip install ocrmypdf
- pip install tabula-py
+	pip install ocrmypdf
+	pip install tabula-py
 	```
+  
 	**conda**
 	```
   conda env create -f pdf_to_table.yml
