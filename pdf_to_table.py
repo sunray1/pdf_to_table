@@ -10,6 +10,7 @@ import subprocess
 def parseargs():
 	parser = argparse.ArgumentParser(description="Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a 109.754,303.219,753.396,533.888 -p 1 -c -l")
 	parser.add_argument("-i", "--pdf", type=str, help="Path to the pdf")
+	parser.add_argument("-o", "--output", type=str, help="Path for output processed files")
 	parser.add_argument("-a", "--area", type=str, action='append', help="Four-item list of top, left, bottom, and right of table location in a page. \
 						Must match up to number of pages.\
 						Example: '406, 24, 695, 589'")
@@ -18,7 +19,7 @@ def parseargs():
 						Example: '1'")
 	# python arg.py -p 1 -p 2 -p 2 -p 3
 	parser.add_argument("-c", "--concatenate", action='store_true', help="Add flag if all parsed tables should be concatenated together")
-	parser.add_argument("-o", "--OCR", action='store_true', help="Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.")
+	parser.add_argument("-ocr", "--OCR", action='store_true', help="Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.")
 	parser.add_argument("-#", "--cores", default="4", help="Number of cores used in parallel when concurrently OCRing pages. Default is 4.")
 	
 	group = parser.add_mutually_exclusive_group()
@@ -46,11 +47,20 @@ def parseargs():
 	if args.area and args.pages and not (args.stream or args.lattice):
 		parser.error("-a AREA and -p PAGES flags detected, please select parsing method -s STREAM or -l LATTICE")
 
+	if args.output:
+		args.output = os.path.normpath(args.output)
+
 	return(args)
 
+def create_output_folder(args):
+	if not os.path.exists(args.output):
+			os.makedirs(args.output)
+			
 def ocrmypdf(args, output_file_names):
 	base_name, extension = os.path.splitext(args.pdf)
-	ocred_pdf = base_name + "_ocr.pdf"
+	output_path = args.output if args.output else os.path.dirname(args.pdf)
+	ocred_pdf = os.path.join(output_path, f"{os.path.basename(base_name)}_ocr.pdf")
+	
 	output_file_names.append(ocred_pdf)
 	subprocess.run(["ocrmypdf", "-l", "eng", args.pdf, ocred_pdf, "--redo-ocr", "-j", args.cores], check=True)
 	return ocred_pdf, output_file_names
@@ -73,28 +83,35 @@ def tabula_parse(args, area, page):
 
 def saveoutputfile(args, dataframes, output_file_names):
 	base_name, extension = os.path.splitext(args.pdf)
+	output_path = args.output if args.output else os.path.dirname(args.pdf)
+
 	if args.concatenate:
 		# Concatenate dataframes
 		#right now this concatenates across headers, so make sure they are the same for each table
 		###Add warning if headers are not the same
-		print(f"CSV file: {base_name}_tables_parsed_concatenated.csv")
+		concatenated_df_file = os.path.join(output_path, f"{os.path.basename(base_name)}_tables_parsed_concatenated.csv")
+		print(f"CSV file: {concatenated_df_file}")
 		concatenated_df = pd.concat(dataframes, ignore_index=True)
-		concatenated_df.to_csv(base_name + "_tables_parsed_concatenated.csv", index=False)
-		output_file_names.append(base_name + "_tables_parsed_concatenated.csv")
+		concatenated_df.to_csv(concatenated_df_file, index=False)
+		output_file_names.append(concatenated_df_file)
 	else:
 		print(f"CSV file(s):")
 		# Save dataframes separately
 		for idx, df in enumerate(dataframes, start=1):
-			print(f"\t{base_name}_table_parsed_{idx}.csv")
-			df.to_csv(f'{base_name}_table_parsed_{idx}.csv', index=False)
-			output_file_names.append(f'{base_name}_table_parsed_{idx}.csv')
+			individual_df = os.path.join(output_path, f"{os.path.basename(base_name)}_tables_parsed_{idx}.csv")
+			print(f"\t{individual_df}")
+			df.to_csv(individual_df, index=False)
+			output_file_names.append(individual_df)
 	return output_file_names
 
 def save_parameters(args, outputs):
 	base_name, extension = os.path.splitext(args.pdf)
+	output_path = args.output if args.output else os.path.dirname(args.pdf)
+	parameter_file = os.path.join(output_path, f"{os.path.basename(base_name)}_parameters.txt")	
+	
 	current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-	print(f"\nRun Details: {base_name}_parameters.txt")
-	with open(base_name + "_parameters.txt", 'w') as f:
+	print(f"\nRun Details: {parameter_file}")
+	with open(parameter_file, 'w') as f:
 		f.write("Script Execution Summary\n")
 		f.write(f"Date and Time: {current_datetime}\n")
 		f.write("------------------------------\n")
@@ -104,23 +121,25 @@ def save_parameters(args, outputs):
 		
 		f.write("Script Arguments:\n")
 		for arg in vars(args):
-			f.write(f"{arg}: {getattr(args, arg)}\n")
+			if arg != "ocr_pdf":
+				f.write(f"{arg}: {getattr(args, arg)}\n")
 		f.write("\n")
 		
 		f.write("Outputs:\n")
 		for output_name in outputs:
 			f.write(f"{output_name}\n")
-			f.write(f"{base_name}_parameters.txt")
+		f.write(f"{parameter_file}")
 
 def main():
 	args = parseargs()
 	output_file_names = []
-	
+	create_output_folder(args)
 	current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	print("\nScript Execution Summary")
 	print(f"Date and Time: {current_datetime}")
 	print("------------------------------\n")
 	print(f"PDF input: {args.pdf}")
+
 	if args.OCR:
 		print(f"Perform OCR: {args.OCR}")
 		print(f"Number of Cores: {args.cores}")
