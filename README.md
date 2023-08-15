@@ -105,6 +105,8 @@ Depending on the type of PDF file, tables can be text or image-based. This can b
 
 The OCRmyPDF library is used to OCR the PDF text and add its position within the PDF itself, since this is important for table extraction. Add the "-o" flag to OCR your PDF and save it as a new file. Note that this will overwrite any positional text saved in your original PDF.
 
+You may choose the number of parallel cores to use when OCRing pages by using the -# CORES command. The default is 4 cores.
+
 #### Table Concatenation
 If the whole table is split across multiple pages or smaller tables within a page, the tables can be concatenated into one. Note that concatenation can be finicky, and works better when the parsed tables all have the same number of parsed columns (i.e. no completely empty columns with just blank space) with the same header names, since columns across tables are concatenated together according to given column headers. It is helpful to use the Tabula app to preview how the tables will be parsed.
 
