@@ -50,7 +50,7 @@ It is **highly** recommended that parsed output tables be verified by humans. An
 ```
 $ python pdf_to_table.py -h
 
-usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o] (-s | -l)
+usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o] [-# CORES] (-s | -l)
 
 Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a
 109.754,303.219,753.396,533.888 -p 1 -c -l
