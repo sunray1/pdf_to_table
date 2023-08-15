@@ -64,6 +64,8 @@ options:
                         Pages of tables in file. Must match up to number of areas. Example: '1'
   -c, --concatenate     Add flag if all parsed tables should be concatenated together
   -o, --OCR             Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.
+  -# CORES, --cores CORES
+                        Number of cores used in parallel when concurrently OCRing pages. Default is 4.
   -s, --stream          Add flag if table should be parsed via the Stream extraction method. Stream is used to parse tables that have
                         whitespaces between cells to simulate a table structure.
   -l, --lattice         Add flag if table should be parsed via the Lattice extraction method. Lattice is used used to parse tables that
