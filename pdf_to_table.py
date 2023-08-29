@@ -10,7 +10,7 @@ import subprocess
 def parseargs():
 	parser = argparse.ArgumentParser(description="Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a 109.754,303.219,753.396,533.888 -p 1 -c -l")
 	parser.add_argument("-i", "--pdf", type=str, help="Path to the pdf")
-	parser.add_argument("-o", "--output", type=str, help="Path for output processed files")
+	parser.add_argument("-o", "--output", type=str, default=".", help="Path for output processed files")
 	parser.add_argument("-a", "--area", type=str, action='append', help="Four-item list of top, left, bottom, and right of table location in a page. \
 						Must match up to number of pages.\
 						Example: '406, 24, 695, 589'")
@@ -21,6 +21,7 @@ def parseargs():
 	parser.add_argument("-c", "--concatenate", action='store_true', help="Add flag if all parsed tables should be concatenated together")
 	parser.add_argument("-ocr", "--OCR", action='store_true', help="Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.")
 	parser.add_argument("-#", "--cores", default="4", help="Number of cores used in parallel when concurrently OCRing pages. Default is 4.")
+	parser.add_argument("-f", "--forceocr", action='store_true', help="Add flag if the OCR needs to be forced")
 	
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument("-s", "--stream", action='store_true', help="Add flag if table should be parsed via the Stream extraction method. \
@@ -62,7 +63,11 @@ def ocrmypdf(args, output_file_names):
 	ocred_pdf = os.path.join(output_path, f"{os.path.basename(base_name)}_ocr.pdf")
 	
 	output_file_names.append(ocred_pdf)
-	subprocess.run(["ocrmypdf", "-l", "eng", args.pdf, ocred_pdf, "--redo-ocr", "-j", args.cores], check=True)
+	if args.forceocr:
+		ocr_type = "--force-ocr"
+	else:
+		ocr_type = "--redo-ocr"
+	subprocess.run(["ocrmypdf", "-l", "eng", args.pdf, ocred_pdf, ocr_type, "-j", args.cores], check=True)
 	return ocred_pdf, output_file_names
 
 def tabula_parse(args, area, page):

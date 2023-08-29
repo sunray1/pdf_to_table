@@ -50,7 +50,7 @@ It is **highly** recommended that parsed output tables be verified by humans. An
 ```
 $ python pdf_to_table.py -h
 
-usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o] [-# CORES] (-s | -l)
+usage: pdf_to_table.py [-h] [-i PDF] -a AREA -p PAGES [-c] [-o] [-# CORES] [-f] (-s | -l)
 
 Parse a pdf table into a csv. Example: python pdf_to_table.py -i pdf-examples/text-based.pdf -a 109.01,60.644,751.164,293.545 -p 1 -a
 109.754,303.219,753.396,533.888 -p 1 -c -l
@@ -66,6 +66,7 @@ options:
   -o, --OCR             Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.
   -# CORES, --cores CORES
                         Number of cores used in parallel when concurrently OCRing pages. Default is 4.
+  -f, --forceocr        Add flag if the OCR needs to be forced
   -s, --stream          Add flag if table should be parsed via the Stream extraction method. Stream is used to parse tables that have
                         whitespaces between cells to simulate a table structure.
   -l, --lattice         Add flag if table should be parsed via the Lattice extraction method. Lattice is used used to parse tables that
