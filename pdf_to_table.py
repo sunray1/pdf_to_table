@@ -19,6 +19,7 @@ def parseargs():
 						Example: '1'")
 	# python arg.py -p 1 -p 2 -p 2 -p 3
 	parser.add_argument("-c", "--concatenate", action='store_true', help="Add flag if all parsed tables should be concatenated together")
+	parser.add_argument("-nh", "--noheaders", action='store_true', help="Add flag if tables being parsed do NOT have a header row to concatenated on")
 	parser.add_argument("-ocr", "--OCR", action='store_true', help="Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.")
 	parser.add_argument("-#", "--cores", default="4", help="Number of cores used in parallel when concurrently OCRing pages. Default is 4.")
 	parser.add_argument("-f", "--forceocr", action='store_true', help="Add flag if the OCR needs to be forced")
@@ -96,6 +97,8 @@ def saveoutputfile(args, dataframes, output_file_names):
 		###Add warning if headers are not the same
 		concatenated_df_file = os.path.join(output_path, f"{os.path.basename(base_name)}_tables_parsed_concatenated.csv")
 		print(f"CSV file: {concatenated_df_file}")
+		if args.noheaders:
+			dataframes = [df.T.reset_index().T.reset_index(drop=True) for df in dataframes]
 		concatenated_df = pd.concat(dataframes, ignore_index=True)
 		concatenated_df.to_csv(concatenated_df_file, index=False)
 		output_file_names.append(concatenated_df_file)
@@ -155,7 +158,8 @@ def main():
 		for idx, area in enumerate(args.area, start=1):
 			print(f"  Area {idx}: {area}")
 		print(f"Pages: {', '.join(args.pages)}")
-		print(f"Concatenate: {args.concatenate}")	
+		print(f"Concatenate: {args.concatenate}")
+		print(f"Concatenate across headers: {args.noheaders}")
 		print(f"Stream Extraction: {args.stream}")
 		print(f"Lattice Extraction: {args.lattice}")
 	else:
