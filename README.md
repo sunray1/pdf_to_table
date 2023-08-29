@@ -63,6 +63,7 @@ options:
   -p PAGES, --pages PAGES
                         Pages of tables in file. Must match up to number of areas. Example: '1'
   -c, --concatenate     Add flag if all parsed tables should be concatenated together
+  -nh, --noheaders      Add flag if tables being parsed do NOT have a header row to concatenated on
   -o, --OCR             Add flag if pdf needs to be OCRed. This will redo any OCR in the input pdf.
   -# CORES, --cores CORES
                         Number of cores used in parallel when concurrently OCRing pages. Default is 4.
